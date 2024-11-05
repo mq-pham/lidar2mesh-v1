@@ -1,0 +1,19 @@
+# Ignore everything in these directories
+checkpoints/*
+data/*
+#visualization/*
+#results/*
+#best_results/*
+viz/*
+*.pyc
+ablation_studies/*
+smpl/*
+smplx/*
+
+# But don't ignore the directories themselves
+!checkpoints/.gitkeep
+!data/.gitkeep
+!smplx/.gitkeep
+!smpl/.gitkeep
+!ablation_studies/.gitkeep
+

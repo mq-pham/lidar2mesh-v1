@@ -1,0 +1,50 @@
+checkpoint:
+  checkpoint_dir: "./checkpoints"
+debug:
+  print: false
+  visualize: false
+data:
+  paths: ["../../SLOPER4D-dataset-zip/seq003_street_002/seq003_street_002_labels.pkl","../../SLOPER4D-dataset-zip/seq005_library_002/seq005_library_002_labels.pkl","../../SLOPER4D-dataset-zip/seq007_garden_001/seq007_garden_001_labels.pkl","../../SLOPER4D-dataset-zip/seq008_running_001/seq008_running_001_labels.pkl","../../SLOPER4D-dataset-zip/seq009_running_002/seq009_running_002_labels.pkl"]
+lidar:
+  sample: 1024
+training:
+  num_epochs: 100
+  batch_size: 10
+  learning_rate: 0.0005
+  weight_decay: 0.0001
+model_architecture:
+  _type: "6D"
+  spatial_kernel_size: [0.5, 8]
+  spatial_stride: 2
+  num_gru_layers: 3
+  gru_channels: [256, 512, 1024]
+  use_transformer: true
+  use_pos_embedding: true
+  emb_relu: true
+  init_layers: true
+  transformer:
+    dim: 1024
+    depth: 6 # 
+    heads: 8 
+    dim_head: 256
+    mlp_dim: 1024
+optimization:
+  opti_trans: false
+  opti_beta: true
+lr_scheduler:
+  milestones: [10,25]
+  gamma: 0.1
+  warmup_factor: 0.001
+  warmup_iters: 2
+  warmup_method: "linear"
+loss:
+  components: ["geo_loss", "joint_loss", "vert_loss", "beta_loss", "trans_loss", "theta_smooth"]
+  use_geodesic: true
+  weights:
+    geo_loss: 1.0
+    joint_loss: 1.0
+    vert_loss: 1.0
+    beta_loss: 0.1
+    trans_loss: 0.1
+    theta_smooth: 0.001
+smpl_gender: "neutral"
