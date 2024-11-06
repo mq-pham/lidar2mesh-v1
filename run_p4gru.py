@@ -178,6 +178,11 @@ def run_simulation(config: Dict[str, Any], experiment_dir: Path, run_dir: Path,
     header.extend([f'Train_{comp}' for comp in config['loss']['components']])
     header.extend([f'Val_{comp}' for comp in config['loss']['components']])
     csv_writer.writerow(header)
+
+    # CSV file for storing eval_results  
+    csv_path_ = run_dir / 'eval_results.csv'
+    csv_file_ = open(csv_path_, 'w', newline='')
+    csv_writer_ = csv.writer(csv_file_)
     
     # Start resource monitoring in a separate thread
     monitor_thread = threading.Thread(target=monitor_resources, args=(30,))  # Update every 10 seconds
