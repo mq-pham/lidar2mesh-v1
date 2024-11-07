@@ -5,7 +5,7 @@ import pickle
 import torch
 import smplx
 import numpy as np
-#import open3d as o3d
+import open3d as o3d
 
 from scipy.spatial.transform import Rotation as R
 from torch.utils.data import Dataset, DataLoader, Sampler, Subset
@@ -58,18 +58,18 @@ def get_bool_from_coordinates(coordinates, shape=(1080, 1920)):
 
     return bool_arr
 
-
+""" 
 def voxel_downsample(points: torch.Tensor, voxel_size: float):
-    """
-    Downsamples points using a voxel grid approach.
     
-    Args:
-        points (torch.Tensor): A tensor containing 3D points of shape (N, 3).
-        voxel_size (float): The size of each voxel.
+    #Downsamples points using a voxel grid approach.
+    
+    #Args:
+    #    points (torch.Tensor): A tensor containing 3D points of shape (N, 3).
+    #    voxel_size (float): The size of each voxel.
         
-    Returns:
-        torch.Tensor: A tensor of downsampled points.
-    """
+    #Returns:
+    #    torch.Tensor: A tensor of downsampled points.
+   
     # Scale points to voxel space
     voxel_indices = (points / voxel_size).floor().long()
     unique_voxels, inverse_indices = torch.unique(voxel_indices, return_inverse=True, dim=0)
@@ -85,17 +85,17 @@ def voxel_downsample(points: torch.Tensor, voxel_size: float):
     return torch.stack(downsampled_points)
 
 def fix_points_num(points: np.array, num_points: int):
-    """
-    Downs samples the points using voxel and uniform downsampling,
-    and either repeats or randomly selects points to reach the desired number.
     
-    Args:
-      points (np.array): a numpy array containing 3D points.
-      num_points (int): the desired number of points 
+    #Downs samples the points using voxel and uniform downsampling,
+    #and either repeats or randomly selects points to reach the desired number.
     
-    Returns:
-      a numpy array `(num_points, 3)`
-    """
+    #Args:
+    #  points (np.array): a numpy array containing 3D points.
+    #  num_points (int): the desired number of points 
+    
+    #Returns:
+    #  a numpy array `(num_points, 3)`
+    
     if len(points) == 0:
         return np.zeros((num_points, 3))
     
@@ -124,12 +124,12 @@ def fix_points_num(points: np.array, num_points: int):
 
     return res.numpy()  # Convert back to numpy array
 
-
+"""
 
 ##########
 # TOBE UPDATE 
 
-"""
+
 def fix_points_num(points: np.array, num_points: int):
   
     #downsamples the points using voxel and uniform downsampling, 
@@ -164,7 +164,7 @@ def fix_points_num(points: np.array, num_points: int):
     else:
         res = points[np.random.choice(origin_num_points, num_points)]
     return res
-"""
+
 
 INTRINSICS = [599.628, 599.466, 971.613, 540.258]
 DIST       = [0.003, -0.003, -0.001, 0.004, 0.0]
