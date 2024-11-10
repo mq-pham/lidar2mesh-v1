@@ -29,7 +29,7 @@ model_architecture:
     dim_head: 256
     mlp_dim: 1024
 optimization:
-  opti_trans: false
+  opti_trans: true
   opti_beta: true
 lr_scheduler:
   milestones: [10,25]
