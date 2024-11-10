@@ -11,7 +11,7 @@ from trainer import train_one_epoch, evaluate, test
 from loss import Loss, WarmupMultiStepLR
 from p4gru import P4GRU
 from utils import init_weights, optimize_memory
-from data_loader import SLOPER4D_Dataset, create_dataloaders
+from data_loader import SLOPER4D_Dataset, create_dataloaders_all
 from torch.utils.data import DataLoader
 import psutil
 #import GPUtil
@@ -333,19 +333,27 @@ def main():
     config = load_config("config_mac.yaml")
     
     # Dataset setup
-    pkl_file = Path(config['data']['paths'])
-    pkl_file = Path(__file__).parent.absolute() / pkl_file
+    pkl_files = config['data']['paths']
+    #pkl_file = Path(__file__).parent.absolute() / pkl_file
  
-    dataset = SLOPER4D_Dataset(pkl_file=str(pkl_file),
-                               device=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
-                               return_torch=True,
-                               fix_pts_num=config['lidar']['sample'],
-                               print_info=True,
-                               return_smpl=True)
+    #dataset = SLOPER4D_Dataset(pkl_file=str(pkl_file),
+    #                           device=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
+    #                           return_torch=True,
+    #                           fix_pts_num=config['lidar']['sample'],
+    #                           print_info=True,
+    #                           return_smpl=True)
+    dataset = {} 
+    for p in range(len(pkl_files)):
+        d = SLOPER4D_Dataset(pkl_file=str(pkl_files[p]),
+                                    device=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
+                                    return_torch=True,
+                                    fix_pts_num=1024,
+                                    print_info=True,
+                                    return_smpl=True)
+        dataset.update([(str(p),d)])
     
     # Create dataloaders
-    train_loader, val_loader, test_loader = create_dataloaders(dataset, config['training']['batch_size'], test_frames=range(3000, 3100))
-    
+    train_loader, val_loader, test_loader = create_dataloaders_all(dataset, config['training']['batch_size'], test_frames=range(1000, 1100))    
     # Run ablation studies
     
     all_loss_components = config['loss']['components']

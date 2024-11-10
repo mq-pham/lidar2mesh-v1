@@ -6,6 +6,7 @@ import torch
 import smplx
 import numpy as np
 #import open3d as o3d
+import itertools
 
 from scipy.spatial.transform import Rotation as R
 from torch.utils.data import Dataset, DataLoader, Sampler, Subset
@@ -430,6 +431,20 @@ def create_dataloaders(dataset, batch_size, test_frames=range(3000, 3100)):
     print(f"Test batches: {len(test_loader)}")
 
     return train_loader, val_loader, test_loader
+
+def create_dataloaders_all(dataset, batch_size, test_frames=range(1000, 1100)):
+   
+    for p in range(len(dataset)):
+        train, val, test =  create_dataloaders(dataset[str(p)], batch_size, test_frames=test_frames)
+        if p==0:
+            train_loader = train
+            val_loader = val 
+            test_loader = test
+        else:
+            train_loader = itertools.chain(train_loader, train)
+            val_loader =  itertools.chain(val_loader, val) 
+            test_loader =  itertools.chain(test_loader, test)
+    return list(train_loader), list(val_loader), list(test_loader) 
 
 
 # def create_dataloaders(dataset, batch_size, test_frames=100, sample_size=200):
