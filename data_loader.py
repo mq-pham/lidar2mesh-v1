@@ -174,17 +174,16 @@ LIDAR2CAM  = [[[-0.0355545576, -0.999323133, -0.0094419378, -0.00330376451],
               [0.0, 0.0, 0.0, 1.0]]]
 
 class SLOPER4D_Dataset(Dataset):
-    def __init__(self, pkl_files, 
+    def __init__(self, pkl_file, 
                  device='cpu', 
                  return_torch:bool=True, 
                  fix_pts_num:int=1024,
                  print_info:bool=True,
                  return_smpl:bool=True):
-        data = []
-        for pkl_file in pkl_files:
+       
             
-            with open(pkl_file, 'rb') as f:
-                data = data + pickle.load(f)
+        with open(pkl_file, 'rb') as f:
+            data = pickle.load(f)
 
         self.data         = data
         self.pkl_file     = pkl_file
