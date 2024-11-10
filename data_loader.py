@@ -5,7 +5,7 @@ import pickle
 import torch
 import smplx
 import numpy as np
-import open3d as o3d
+#import open3d as o3d
 
 from scipy.spatial.transform import Rotation as R
 from torch.utils.data import Dataset, DataLoader, Sampler, Subset
@@ -58,7 +58,6 @@ def get_bool_from_coordinates(coordinates, shape=(1080, 1920)):
 
     return bool_arr
 
-""" 
 def voxel_downsample(points: torch.Tensor, voxel_size: float):
     
     #Downsamples points using a voxel grid approach.
@@ -117,53 +116,53 @@ def fix_points_num(points: np.array, num_points: int):
     else:
         
         # Perform voxel downsampling
-        downsampled_points = voxel_downsample(points_tensor, voxel_size=0.05)
+        #downsampled_points = voxel_downsample(points_tensor, voxel_size=0.05)
         # Randomly sample from downsampled points
         indices = torch.randint(0, origin_num_points, (num_points,))
-        res = downsampled_points[indices]
+        #res = downsampled_points[indices]
+        res = points_tensor[indices]
 
     return res.numpy()  # Convert back to numpy array
 
-"""
 
 ##########
 # TOBE UPDATE 
 
 
-def fix_points_num(points: np.array, num_points: int):
-  
-    #downsamples the points using voxel and uniform downsampling, 
-    #and either repeats or randomly selects points to reach the desired number.
-    
-    #Args:
-    #  points (np.array): a numpy array containing 3D points.
-    #  num_points (int): the desired number of points 
-    
-    #Returns:
-    #  a numpy array `(num_points, 3)`
-    
-    if len(points) == 0:
-        return np.zeros((num_points, 3))
-    points = points[~np.isnan(points).any(axis=-1)]
-
-    pc = o3d.geometry.PointCloud()
-    pc.points = o3d.utility.Vector3dVector(points)
-    pc = pc.voxel_down_sample(voxel_size=0.05)
-    ratio = int(len(pc.points) / num_points + 0.05)
-    if ratio > 1:
-        pc = pc.uniform_down_sample(ratio)
-
-    points = np.asarray(pc.points)
-    origin_num_points = points.shape[0]
-
-    if origin_num_points < num_points:
-        num_whole_repeat = num_points // origin_num_points
-        res = points.repeat(num_whole_repeat, axis=0)
-        num_remain = num_points % origin_num_points
-        res = np.vstack((res, res[:num_remain]))
-    else:
-        res = points[np.random.choice(origin_num_points, num_points)]
-    return res
+#def fix_points_num(points: np.array, num_points: int):
+#  
+#    #downsamples the points using voxel and uniform downsampling, 
+#    #and either repeats or randomly selects points to reach the desired number.
+#    
+#    #Args:
+#    #  points (np.array): a numpy array containing 3D points.
+#    #  num_points (int): the desired number of points 
+#    
+#    #Returns:
+#    #  a numpy array `(num_points, 3)`
+#    
+#    if len(points) == 0:
+#        return np.zeros((num_points, 3))
+#    points = points[~np.isnan(points).any(axis=-1)]
+#
+#    pc = o3d.geometry.PointCloud()
+#    pc.points = o3d.utility.Vector3dVector(points)
+#    pc = pc.voxel_down_sample(voxel_size=0.05)
+#    ratio = int(len(pc.points) / num_points + 0.05)
+#    if ratio > 1:
+#        pc = pc.uniform_down_sample(ratio)
+#
+#    points = np.asarray(pc.points)
+#    origin_num_points = points.shape[0]
+#
+#    if origin_num_points < num_points:
+#        num_whole_repeat = num_points // origin_num_points
+#        res = points.repeat(num_whole_repeat, axis=0)
+#        num_remain = num_points % origin_num_points
+#        res = np.vstack((res, res[:num_remain]))
+#    else:
+#        res = points[np.random.choice(origin_num_points, num_points)]
+#    return res
 
 
 INTRINSICS = [599.628, 599.466, 971.613, 540.258]
@@ -174,15 +173,17 @@ LIDAR2CAM  = [[[-0.0355545576, -0.999323133, -0.0094419378, -0.00330376451],
               [0.0, 0.0, 0.0, 1.0]]]
 
 class SLOPER4D_Dataset(Dataset):
-    def __init__(self, pkl_file, 
+    def __init__(self, pkl_files, 
                  device='cpu', 
                  return_torch:bool=True, 
                  fix_pts_num:int=1024,
                  print_info:bool=True,
                  return_smpl:bool=True):
-        
-        with open(pkl_file, 'rb') as f:
-            data = pickle.load(f)
+        data = []
+        for pkl_file in pkl_files:
+            
+            with open(pkl_file, 'rb') as f:
+                data = data + pickle.load(f)
 
         self.data         = data
         self.pkl_file     = pkl_file

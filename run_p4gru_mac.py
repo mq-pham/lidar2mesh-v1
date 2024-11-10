@@ -333,7 +333,7 @@ def main():
     config = load_config("config_mac.yaml")
     
     # Dataset setup
-    pkl_file = Path(config['data']['paths'][0])
+    pkl_file = Path(config['data']['paths'])
     pkl_file = Path(__file__).parent.absolute() / pkl_file
  
     dataset = SLOPER4D_Dataset(pkl_file=str(pkl_file),
